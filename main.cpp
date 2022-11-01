@@ -26,10 +26,12 @@ void Reverse(int** RT, int RTsize, int position, char RC)
 // beginning_rows는 2차원 배열 beginning의 행 길이, beginning_cols는 2차원 배열 beginning의 열 길이입니다.
 // target_rows는 2차원 배열 target의 행 길이, target_cols는 2차원 배열 target의 열 길이입니다.
 int solution(int** beginning, size_t beginning_rows, size_t beginning_cols, int** target, size_t target_rows, size_t target_cols) {
-    int** ReTarget = (int**)malloc(sizeof(int) * target_rows*2);
+    int** ReTarget = (int**)malloc(sizeof(int) * target_rows * 2);
+    int** ReTarget1 = (int**)malloc(sizeof(int) * target_rows*2);
     for (int i = 0; i < target_rows; i++)
     {
         ReTarget[i] = (int*)malloc(sizeof(int) * target_cols);
+        ReTarget1[i] = (int*)malloc(sizeof(int) * target_cols);
     }
 
     for (int i = 0; i < target_rows; i++)
@@ -39,10 +41,12 @@ int solution(int** beginning, size_t beginning_rows, size_t beginning_cols, int*
             if (beginning[i][j] == target[i][j])
             {
                 ReTarget[i][j] = 0;
+                ReTarget1[i][j] = 0;
             }
             else if (beginning[i][j] != target[i][j])
             {
                 ReTarget[i][j] = 1;
+                ReTarget1[i][j] = 1;
             }
         }
     }
@@ -67,25 +71,34 @@ int solution(int** beginning, size_t beginning_rows, size_t beginning_cols, int*
     }
 
     int count1 = 0;
-    for (int i = 0; i < target_rows; i++)
-    {
-        if (ReTarget[i][0] == 1)
-        {
-            Reverse(ReTarget, target_cols, i, 'c');
-            count1++;
-        }
-    }
-
     for (int i = 0; i < target_cols; i++)
     {
-        if (ReTarget[0][i] == 1)
+        if (ReTarget1[0][i] == 0)
         {
-            Reverse(ReTarget, target_rows, i, 'r');
+            Reverse(ReTarget1, target_rows, i, 'r');
             count1++;
         }
     }
 
-    int answer = count;
+    for (int i = 0; i < target_rows; i++)
+    {
+        if (ReTarget1[i][0] == 1)
+        {
+            Reverse(ReTarget1, target_cols, i, 'c');
+            count1++;
+        }
+    }
+
+    int answer = 0;
+    if (count >= count1)
+    {
+        answer = count1;
+    }
+    else if (count < count1)
+    {
+        answer = count;
+    }
+
     for (int i = 0; i < target_rows; i++)
     {
         for (int j = 0; j < target_cols; j++)
@@ -96,11 +109,14 @@ int solution(int** beginning, size_t beginning_rows, size_t beginning_cols, int*
             }
         }
     }
+
     for (int i = 0; i < target_rows; i++)
     {
         free(ReTarget[i]);
+        free(ReTarget1[i]);
     }
     free(ReTarget);
+    free(ReTarget1);
     return answer;
 }
 
@@ -110,9 +126,9 @@ int solution(int** beginning, size_t beginning_rows, size_t beginning_cols, int*
 int main()
 {
     int* list[ROW];
-    int aaa[ROW][COL] = { {0,1,0,0,0},{1,0,1,0,1},{0,1,1,1,0},{1,0,1,1,0},{0,1,0,1,0} };
+    int aaa[ROW][COL] = { {0,1,1,1,1},{1,0,0,0,0},{1,0,0,0,0},{1,0,0,0,0},{0,1,1,1,1} };
     int* tlist[ROW];
-    int taaa[ROW][COL] = { {1,0,1,1,1},{1,0,1,0,1},{0,1,1,1,0},{1,0,1,1,0},{0,1,0,1,0} };
+    int taaa[ROW][COL] = { {0,0,0,0,0},{0,0,0,0,0},{0,0,0,0,0},{0,0,0,0,0},{0,0,0,0,0} };
     for (int i = 0; i < ROW; i++)
     {
         list[i] = aaa[i];
